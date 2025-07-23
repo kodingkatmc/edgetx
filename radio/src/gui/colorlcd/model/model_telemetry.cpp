@@ -671,14 +671,14 @@ class SensorEditWindow : public SubPage
                 sensor->custom.ratio = value;
                 std::string s("");
                 if (sensor->custom.ratio != 0)
-                  s = formatNumberAsString((sensor->custom.ratio * 1000) / 255, PREC1, 0, "", "%");
+                  s = formatNumberAsString((sensor->custom.ratio * 1000) / 200, PREC1, 0, "", "%");
                 pct->setText(s);
               },
               PREC1);
           num->setZeroText("-");
           std::string s("");
           if (sensor->custom.ratio != 0)
-            s = formatNumberAsString((sensor->custom.ratio * 1000) / 255, PREC1, 0, "", "%");
+            s = formatNumberAsString((sensor->custom.ratio * 1000) / 200, PREC1, 0, "", "%");
           pct->setText(s);
         });
 
