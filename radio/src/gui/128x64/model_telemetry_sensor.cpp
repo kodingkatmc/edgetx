@@ -223,7 +223,7 @@ void menuModelSensor(event_t event)
             if (sensor->custom.ratio == 0) {
               lcdDrawChar(SENSOR_2ND_COLUMN, y, '-', attr);
             } else {  // Ratio + Ratio Percent
-              uint32_t ratio = (sensor->custom.ratio * 1000) / 255;
+              uint32_t ratio = (sensor->custom.ratio * 1000) / 200;
               int ratioLen = countDigits(sensor->custom.ratio);
               int ratioPercLen = countDigits(ratio);
 

@@ -724,6 +724,7 @@ int32_t convertTelemetryValue(int32_t value, uint8_t unit, uint8_t prec, uint8_t
 
 int32_t TelemetrySensor::getValue(int32_t value, uint8_t unit, uint8_t prec) const
 {
+  uint8_t precOffset = 0;
   if (type == TELEM_TYPE_CUSTOM && custom.ratio) {
     /*  farzu:  Not needed, scaling work properly for the 3 types of prec without it  
     if (this->prec == 2) {
@@ -735,12 +736,27 @@ int32_t TelemetrySensor::getValue(int32_t value, uint8_t unit, uint8_t prec) con
     }
     */
     
-    value = (custom.ratio * value + 122) / 255;  //  122/255 (0.48) is to aproximate up (ceiling) 
+    // This allows for the custom.ratio to scale down a sensor while maintaining the data
+    // e.g. it allows 25.20 to scale to 2.52 instead of 2.50
+    if (custom.ratio < 20 && prec == 0)
+    {
+      value = (custom.ratio * value + 1) / 2;  // 1/2 (0.5) is to aproximate up (ceiling)
+      precOffset = 2;
+    }
+    else if ((custom.ratio < 20 || custom.ratio < 200 ) && prec < 2)
+    {
+      value = (custom.ratio * value + 9) / 20;  //  9/20 (0.45) is to aproximate up (ceiling)
+      precOffset = 1;
+    }
+    else
+    {
+      value = (custom.ratio * value + 99) / 200;  //  99/200 (0.495) is to aproximate up (ceiling)
+    }
   }
 
   // Does it needs any conversion ? 
   if ((unit != this->unit) || (prec != this->prec)) {
-    value = convertTelemetryValue(value, unit, prec, this->unit, this->prec);
+    value = convertTelemetryValue(value, unit, prec, this->unit, this->prec + precOffset);
   }
 
   if (type == TELEM_TYPE_CUSTOM) {
